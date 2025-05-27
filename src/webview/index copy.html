@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>语言学习助手 - 极简科技风</title>
+
+  <style>
+    :root {
+      --accent: #7b68ee;
+      --card-bg: #1e1f26;
+      --bg: #111;
+      --text-color: #f0f0f0;
+      --radius: 10px;
+      --font-main: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text-color);
+      padding: 30px;
+      max-width: 640px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      background: #2a2a2a;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 12px 16px;
+      margin: 4px;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #9370db;
+      transform: translateY(-1px);
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: #2a2a2a;
+      font-size: 15px;
+      white-space: pre-wrap;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .review-card {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: auto;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .card-face {
+      width: 100%;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: #2a2a3a;
+      text-align: center;
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      min-height: 120px;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      z-index: 0;
+    }
+
+    .card-actions {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-actions span {
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>📘 语言学习助手 - 极简版</h2>
+
+  <!-- 显示翻译结果 -->
+  <div class="result" id="translation" style="margin-bottom: 20px;"></div>
+
+  <!-- 输入框 -->
+  <input type="text" id="sentenceInput" placeholder="请输入英文句子..." />
+
+  <!-- 查询 & 保存按钮 -->
+  <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;">
+    <button onclick="queryTranslation()">🔍 查询</button>
+    <button onclick="saveSentence()">💾 保存</button>
+    <button onclick="speakSentence()">🔊 朗读</button>
+  </div>
+
+  <!-- 句型结构展示 -->
+  <div class="result" id="structure"></div>
+
+  <!-- 复习按钮 -->
+  <div style="text-align:center;margin-top:24px;">
+    <button onclick="startReview()">📖 开始复习</button>
+  </div>
+
+  <!-- 复习卡片 -->
+  <div id="reviewCard" class="review-card" style="display:none;">
+    <div class="card-inner" id="cardInner">
+      <!-- 正面 -->
+      <div class="card-face card-front" id="cardFront">
+        <p id="cardTextFront">This is a sample sentence.</p>
+        <button onclick="toggleCard()" style="width:100%;background:#7b68ee;">🔄 查看译文</button>
+      </div>
+
+      <!-- 背面 -->
+      <div class="card-face card-back" id="cardBack">
+        <p id="cardTextBack">这是中文翻译。</p>
+        <button onclick="toggleCard()" style="width:100%;background:#7b68ee;">🔄 查看原句</button>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <span id="cardIndex">1 / 10</span>
+      <progress id="cardProgress" value="0" max="10" style="width:70%;"></progress>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:12px;">
+      <button onclick="prevCard()">⬅️ 上一个</button>
+      <button onclick="nextCard()">下一个 ➡️</button>
+      <button onclick="closeReview()" style="background:#999;">❌ 关闭</button>
+    </div>
+  </div>
+
+  <script src="${vscodeUri}/libs/tiny-nlp.js"></script>
+  <script>
+
+    window.onload = () => {
+      if (typeof TinyNLP === 'undefined') {
+        console.error('❌ TinyNLP 未成功加载，请检查路径或是否挂载到 window');
+      } else {
+        console.log('✅ TinyNLP 成功加载');
+      }
+    };
+
+    function analyzeSentenceStructure(sentence) {
+      if (typeof TinyNLP === 'undefined') {
+        return '⚠️ 本地语法解析器未加载';
+      }
+
+      try {
+        const result = TinyNLP.analyze(sentence);
+        return `
+主语: ${result.subject || ''}
+动词: ${result.verb || ''}
+宾语: ${result.object || ''}
+时态: ${result.tense || ''}
+`.trim();
+      } catch (e) {
+        return '语法分析出错: ' + e.message;
+      }
+    }
+
+
+    let isFlipped = false;
+
+    function toggleCard() {
+      const cardInner = document.getElementById('cardInner');
+      isFlipped = !isFlipped;
+      cardInner.style.transform = isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    }
+
+    function analyzeSentenceStructure(sentence) {
+      if (typeof TinyNLP === 'undefined') {
+        return '⚠️ 本地 NLP 模块未加载';
+      }
+
+      try {
+        const result = TinyNLP.analyze(sentence);
+
+        return [
+          result.subject ? `主语: ${result.subject}` : '',
+          result.verb ? `动词: ${result.verb}` : '',
+          result.object ? `宾语: ${result.object}` : '',
+          result.tense ? `时态: ${result.tense}` : ''
+        ].filter(Boolean).join('\n') || '无法识别句型结构';
+      } catch (e) {
+        return '语法分析出错: ' + e.message;
+      }
+    }
+
+    const vscode = acquireVsCodeApi();
+    let sentences = [];
+    let currentCardIndex = 0;
+
+    function queryTranslation() {
+      const input = document.getElementById('sentenceInput').value.trim();
+      if (!input) {
+        alert("请输入英文句子");
+        return;
+      }
+
+      vscode.postMessage({
+        command: 'translate',
+        text: input,
+        original: input
+      });
+    }
+
+    function saveSentence() {
+      const input = document.getElementById('sentenceInput').value.trim();
+      if (!input) {
+        alert("请输入英文句子");
+        return;
+      }
+
+      const translation = document.getElementById('translation').innerText.replace('翻译: ', '');
+      const structure = document.getElementById('structure').innerText.replace('语法结构:\n', '');
+
+      vscode.postMessage({
+        command: 'saveSentence',
+        data: {
+          original: input,
+          translation: translation,
+          structure: structure
+        }
+      });
+
+      // 清空输入
+      document.getElementById('sentenceInput').value = '';
+      document.getElementById('translation').innerText = '';
+      document.getElementById('structure').innerText = '';
+    }
+
+    function startReview() {
+      vscode.postMessage({ command: 'getHistory' });
+    }
+
+    window.addEventListener('message', event => {
+      const message = event.data;
+
+      if (message.command === 'translationResult') {
+        document.getElementById('translation').innerText = '翻译: ' + message.text;
+        document.getElementById('structure').innerText = '语法结构:\n' + analyzeSentenceStructure(message.original);
+      }
+
+      if (message.command === 'error') {
+        document.getElementById('translation').innerText = '错误: ' + message.text;
+      }
+
+      if (message.command === 'historyData') {
+        sentences = message.data;
+        currentCardIndex = 0;
+        document.getElementById('reviewCard').style.display = 'block';
+        showCurrentCard();
+      }
+    });
+
+    function showCurrentCard() {
+      if (sentences.length === 0) return;
+
+      const item = sentences[currentCardIndex];
+
+      document.getElementById('cardTextFront').innerText = item.original;
+      document.getElementById('cardTextBack').innerText = `翻译: ${item.translation}\n\n句型: \n${item.structure}`;
+      document.getElementById('cardIndex').innerText = `${currentCardIndex + 1} / ${sentences.length}`;
+      document.getElementById('cardProgress').setAttribute('max', sentences.length);
+      document.getElementById('cardProgress').setAttribute('value', currentCardIndex + 1);
+      isFlipped = false;
+      document.getElementById('cardInner').style.transform = 'rotateY(0deg)';
+    }
+
+    function nextCard() {
+      currentCardIndex = Math.min(currentCardIndex + 1, sentences.length - 1);
+      showCurrentCard();
+    }
+
+    function prevCard() {
+      currentCardIndex = Math.max(currentCardIndex - 1, 0);
+      showCurrentCard();
+    }
+
+    function closeReview() {
+      document.getElementById('reviewCard').style.display = 'none';
+    }
+
+    function speakSentence() {
+      const input = document.getElementById('sentenceInput').value.trim();
+      if (!input) {
+        alert("请输入英文句子");
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(input);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+
+</html>

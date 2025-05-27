@@ -1,0 +1,145 @@
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    color: #fff;
+    margin: 0;
+    padding: 30px;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: auto;
+    background-color: #2a2a3d;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    padding: 30px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  textarea {
+    height: 100px;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    resize: none;
+    background-color: #1e1e2f;
+    color: #fff;
+  }
+
+  button {
+    margin-top: 12px;
+    padding: 12px;
+    font-size: 16px;
+    background: linear-gradient(to right, #1e90ff, #1c86ee);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(30, 144, 255, 0.4);
+  }
+
+  .result-box {
+    background-color: #3a3a4d;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .flashcard-list {
+    margin-top: 20px;
+    max-height: 300px; /* 固定高度 */
+    overflow-y: auto;   /* 垂直滚动 */
+    padding-right: 10px;
+    position: relative;
+  }
+
+  /* 可选：美化滚动条（仅 Webkit 浏览器有效） */
+  .flashcard-list::-webkit-scrollbar {
+    width: 8px;
+  }
+  .flashcard-list::-webkit-scrollbar-track {
+    background: #2a2a3d;
+    border-radius: 4px;
+  }
+  .flashcard-list::-webkit-scrollbar-thumb {
+    background: #1e90ff;
+    border-radius: 4px;
+  }
+  .flashcard-list::-webkit-scrollbar-thumb:hover {
+    background: #1c86ee;
+  }
+
+  .flashcard {
+    background-color: #4a4a5d;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .flashcard p {
+    margin: 6px 0;
+  }
+
+  .flashcard-type {
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  .speak-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    background: #1e90ff;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .review-mode {
+    margin-top: 30px;
+  }
+
+  .flashcard-review {
+    background-color: #3a3a4d;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .flashcard-review p {
+    font-size: 22px;
+    margin: 10px 0;
+  }
+
+  .flashcard-review button {
+    margin: 10px;
+  }
+</style>
