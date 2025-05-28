@@ -7,7 +7,6 @@
   "engines": {
     "vscode": "^1.100.0"
   },
-  "keywords": ["translate","translator","language learning"],
   "main": "dist/extension.js",
   "files": [
     "dist/**",
