@@ -1,14 +1,8 @@
-.vscode/**
-.vscode-test/**
-out/**
-node_modules/**
-src/**
-.gitignore
-.yarnrc
+# 忽略开发构建文件
+dist/
+node_modules/
 webpack.config.js
-vsc-extension-quickstart.md
-**/tsconfig.json
-**/eslint.config.mjs
-**/*.map
-**/*.ts
-**/.vscode-test.*
+tsconfig.json
+
+# 保留 src 目录
+!src/

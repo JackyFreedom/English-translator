@@ -2,15 +2,23 @@
   "name": "english-translator",
   "displayName": "English Translator",
   "description": "A minimal English to Chinese translator extension",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "publisher": "aabccbabc",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JackyFreedom/English-translator"
+  },
+  "icon": "resources/icon.png",
   "engines": {
     "vscode": "^1.100.0"
   },
-  "keywords": ["translate","translator","language learning"],
-  "main": "dist/extension.js",
+  "keywords": [
+    "translate",
+    "translator",
+    "language learning"
+  ],
+  "main": "src/extension.js",
   "files": [
-    "dist/**",
     "src/webview/**",
     "README.md",
     "LICENSE"
@@ -19,6 +27,19 @@
     "onCommand:translator.showTranslationPanel"
   ],
   "contributes": {
+    "configuration": [
+      {
+        "type": "object",
+        "title": "Language Learning Settings",
+        "properties": {
+          "languageLearning.history": {
+            "type": "array",
+            "default": [],
+            "description": "语言学习助手相关配置"
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "translator.showTranslationPanel",

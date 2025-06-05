@@ -48,7 +48,7 @@ english-translator/
 │   ├── extension.ts          # 插件主逻辑（TypeScript）
 │   └── webview/
 │       ├── index.html        # Webview UI 主界面
-│       └── main.js           # Webview 前端交互脚本
+│       └── index.js           # Webview 前端交互脚本
 ├── package.json              # 插件元信息与依赖配置
 └── README.md                 # 当前文档
 📝 开发者指南
