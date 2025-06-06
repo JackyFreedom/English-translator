@@ -112,6 +112,7 @@ class TranslationPlugin {
       this.forgetCardBtn = document.getElementById("forgetCardBtn");
       this.toggleAnswerBtn = document.getElementById("toggleAnswerBtn");
       this.speakCurrentBtn = document.getElementById("speakCurrentBtn");
+      this.speakResultBtn = document.getElementById("speakResultBtn");
 
       // 新增：清空按钮
       this.clearAllBtn = document.getElementById("clearAllBtn");
@@ -143,7 +144,13 @@ class TranslationPlugin {
         const text = document.getElementById("reviewFrontText").innerText;
         this.speakText(text);
       });
-
+// 绑定 speakResultBtn 发音功能
+      if (this.speakResultBtn) {
+        this.speakResultBtn.addEventListener("click", () => {
+          const text = this.showEn.innerText; // 翻译结果中的英文句子
+          this.speakText(text);
+        });
+      }
       // 新增：绑定清空按钮点击事件
       if (this.clearAllBtn) {
         this.clearAllBtn.addEventListener("click", () => this.clearAllCards());
